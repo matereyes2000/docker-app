@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #ccc;
+        }
+        .tag {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .tag-not-started {
+            background-color: #FF5757; /* Red */
+            color: white;
+        }
+        .tag-in-progress {
+            background-color: #FFD700; /* Yellow */
+            color: black;
+        }
+        .tag-done {
+            background-color: #4CAF50; /* Green */
+            color: white;
+        }
+        .completed-task {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        .tag-dropdown {
+            display: inline-block;
+        }
+        .tag-dropdown select {
+            appearance: none;
+            padding: 2px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Employee Task To-Do List</h1>
+    <form id="todoForm">
+        <label for="task">New Task:</label>
+        <input type="text" id="task" name="task" required>
+        <div class="tag-dropdown">
+            <label for="status">Status:</label>
+            <select id="status" name="status">
+                <option value="not-started">Not Started</option>
+                <option value="in-progress">In Progress</option>
+                <option value="done">Done</option>
+            </select>
+        </div>
+        <button type="button" onclick="addTask()">Add Task</button>
+    </form>
+
+    <ul id="taskList">
+        <!-- Task items will be dynamically added here -->
+    </ul>
+
+    <script>
+        function addTask() {
+            const taskInput = document.getElementById("task");
+            const taskText = taskInput.value.trim();
+
+            if (taskText !== "") {
+                const taskList = document.getElementById("taskList");
+
+                // Create new list item
+                const listItem = document.createElement("li");
+
+                // Create task text
+                const taskTextElement = document.createElement("span");
+                taskTextElement.textContent = taskText;
+
+                // Get selected status
+                const statusSelect = document.getElementById("status");
+                const selectedStatus = statusSelect.value;
+
+                // Create and append status tag
+                const statusTag = document.createElement("span");
+                statusTag.classList.add("tag", `tag-${selectedStatus}`);
+                statusTag.textContent = selectedStatus.replace('-', ' '); // Capitalize and replace dash with space
+
+                // Create and append status dropdown for editing
+                const statusDropdown = document.createElement("div");
+                statusDropdown.classList.add("tag-dropdown");
+                const statusSelectEdit = document.createElement("select");
+                const statusOptions = ["not-started", "in-progress", "done"];
+                statusOptions.forEach(option => {
+                    const optionElement = document.createElement("option");
+                    optionElement.value = option;
+                    optionElement.textContent = option.replace('-', ' ');
+                    statusSelectEdit.appendChild(optionElement);
+                });
+                statusSelectEdit.value = selectedStatus;
+                statusDropdown.appendChild(statusSelectEdit);
+
+                // Append elements to the list item
+                listItem.appendChild(taskTextElement);
+                listItem.appendChild(statusTag);
+                listItem.appendChild(statusDropdown);
+
+                // Append the list item to the task list
+                taskList.appendChild(listItem);
+
+                // Clear the input field and reset status
+                taskInput.value = "";
+                statusSelect.value = "not-started";
+
+                // Add event listener to status dropdown for editing
+                statusSelectEdit.addEventListener("change", function() {
+                    // Update status tag color and text based on selected status
+                    statusTag.className = ""; // Clear existing classes
+                    statusTag.classList.add("tag", `tag-${this.value}`);
+                    statusTag.textContent = this.value.replace('-', ' ');
+                });
+            }
+        }
+    </script>
+</body>
+</html>
